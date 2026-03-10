@@ -2,7 +2,9 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
         <members>MyServiceClass1</members>
+        <members>MyServiceClass2</members>
         <members>MyServiceClassTest1</members>
+        <members>MyServiceClassTest2</members>
         <name>ApexClass</name>
     </types>
     <version>66.0</version>
