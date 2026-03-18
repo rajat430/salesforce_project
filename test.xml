@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="SalesforceTests" tests="3" failures="1" errors="0" time="2.45">
+
+    <testcase classname="AccountServiceTest" name="testCreateAccount" time="0.45">
+    </testcase>
+
+    <testcase classname="AccountServiceTest" name="testUpdateAccount" time="0.30">
+    </testcase>
+
+    <testcase classname="OpportunityServiceTest" name="testCreateOpportunity" time="1.20">
+        <failure message="System.AssertException: Expected true but was false"/>
+    </testcase>
+
+</testsuite>
