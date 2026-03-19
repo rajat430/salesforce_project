@@ -12,11 +12,11 @@ jobs:
         run: |
           echo "Initializing environment..."
           # Add any necessary environment setup commands here
-          if [[ ${{github.ref}} == 'refs/heads/feature/*' ]]; then
+          if ${{github.ref.startsWith('refs/heads/feature')}}; then
             echo "This is a feature branch."
-          elif [[ ${{github.ref}} == 'refs/heads/bugfix/*' ]]; then
+          elif ${{github.ref.startsWith('refs/heads/bugfix')}}; then
             echo "This is a bugfix branch."
-          elif [[ ${{github.ref}} == 'refs/heads/hotfix/*' ]]; then
+          elif ${{github.ref.startsWith('refs/heads/hotfix')}}; then
             echo "This is a hotfix branch."
           else
             echo "Branch does not match expected patterns."
