@@ -4,7 +4,7 @@ on:
     branches: [develop,release/**,main]
     types: [opened,reopened]
 jobs:
-  validate_commit:
+  pr_validation:
     env: 
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     runs-on: ubuntu-latest
