@@ -1,0 +1,23 @@
+name: validate_commit
+on: 
+  push:
+    branches: [feature/**,bugfix/**,hotfix/**]
+jobs:
+  validate_commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Environment Initialization
+        run: |
+          echo "Initializing environment..."
+          # Add any necessary environment setup commands here
+          if [[ ${{github.ref}} == 'refs/heads/feature/*' ]]; then
+            echo "This is a feature branch."
+          elif [[ ${{github.ref}} == 'refs/heads/bugfix/*' ]]; then
+            echo "This is a bugfix branch."
+          elif [[ ${{github.ref}} == 'refs/heads/hotfix/*' ]]; then
+            echo "This is a hotfix branch."
+          else
+            echo "Branch does not match expected patterns."
+            exit 1
