@@ -1,0 +1,52 @@
+name: pr_validation
+on: 
+  pull_request:
+    branches: [develop,release/**,main]
+    types: [closed]
+jobs:
+  validate_commit:
+    if: github.event.pull_request.merged == true
+    env: 
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Salesforce CLI
+        run: |
+          echo "Installing Salesforce CLI..."
+          npm install -g @salesforce/cli
+      - name: Environment Initialization
+        run: |
+          echo "Initializing environment..."
+          # Add any necessary environment setup commands here
+          if [[ ${{github.base_ref}} == "develop" ]]; then
+            echo "This is a develop branch."
+            echo "SFDX_AUTH_URL=${{secrets.SFDX_AUTH_URL}}" >> $GITHUB_ENV
+            echo "ORG_USERNAME=${{secrets.ORG_USERNAME}}" >> $GITHUB_ENV
+          elif [[ ${{github.base_ref}} == "release/project1" ]]; then
+            echo "This is a release branch for project1."
+            echo "SFDX_AUTH_URL=${{secrets.SFDX_AUTH_URL}}" >> $GITHUB_ENV
+            echo "ORG_USERNAME=${{secrets.ORG_USERNAME}}" >> $GITHUB_ENV
+          elif [[ ${{github.base_ref}} == "release/project2" ]]; then
+            echo "This is a release branch for project2."
+            echo "SFDX_AUTH_URL=${{secrets.SFDX_AUTH_URL}}" >> $GITHUB_ENV
+            echo "ORG_USERNAME=${{secrets.ORG_USERNAME}}" >> $GITHUB_ENV
+          elif [[ ${{github.base_ref}} == "main" ]]; then
+            echo "This is the main branch."
+            echo "SFDX_AUTH_URL=${{secrets.SFDX_AUTH_URL}}" >> $GITHUB_ENV
+            echo "ORG_USERNAME=${{secrets.ORG_USERNAME}}" >> $GITHUB_ENV
+          else
+            echo "Branch does not match expected patterns."
+            exit 1
+          fi
+      - name: Login to Salesforce
+        run: |
+          echo "Logging in to Salesforce..."
+          echo "$SFDX_AUTH_URL" > auth.txt
+          sf org login sfdx-url --sfdx-url-file auth.txt --alias $ORG_USERNAME
+      - name: Validate Commit Message
+        run: |
+          echo "Validating commit message..."
+          sf project deploy start -d force-app -c -l RunLocalTests -o $ORG_USERNAME --verbose
