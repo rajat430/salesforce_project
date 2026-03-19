@@ -37,8 +37,8 @@ jobs:
         run: |
           echo "Logging in to Salesforce..."
           echo "$SFDX_AUTH_URL" > auth.txt
-          sf org login sfdx-url --sfdx-url-file auth.txt --alias target-org
+          sf org login sfdx-url --sfdx-url-file auth.txt --alias $ORG_USERNAME
       - name: Validate Commit Message
         run: |
           echo "Validating commit message..."
-          sf project deploy start --dry-run -d force-app -c -l RunLocalTests -o dev-org --verbose
+          sf project deploy start --dry-run -d force-app -c -l RunLocalTests -o $ORG_USERNAME --verbose
