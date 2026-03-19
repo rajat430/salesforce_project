@@ -8,6 +8,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Install Salesforce CLI
+        run: |
+          echo "Installing Salesforce CLI..."
+          npm install -g sfdx-cli
       - name: Environment Initialization
         run: |
           echo "Initializing environment..."
