@@ -14,11 +14,22 @@ jobs:
           # Add any necessary environment setup commands here
           if [[ ${{github.ref}} == refs/heads/feature/* ]]; then
             echo "This is a feature branch."
+            echo "SFDX_AUTH_URL=${{secrets.SFDX_AUTH_URL}}" >> $GITHUB_ENV
+            echo "ORG_USERNAME=${{secrets.ORG_USERNAME}}" >> $GITHUB_ENV
           elif [[ ${{github.ref}} == refs/heads/bugfix/* ]]; then
             echo "This is a bugfix branch."
+            echo "SFDX_AUTH_URL=${{secrets.SFDX_AUTH_URL}}" >> $GITHUB_ENV
+            echo "ORG_USERNAME=${{secrets.ORG_USERNAME}}" >> $GITHUB_ENV
           elif [[ ${{github.ref}} == refs/heads/hotfix/* ]]; then
             echo "This is a hotfix branch."
+            echo "SFDX_AUTH_URL=${{secrets.SFDX_AUTH_URL}}" >> $GITHUB_ENV
+            echo "ORG_USERNAME=${{secrets.ORG_USERNAME}}" >> $GITHUB_ENV
           else
             echo "Branch does not match expected patterns."
             exit 1
           fi
+      - name: Login to Salesforce
+        run: |
+          echo "Logging in to Salesforce..."
+          echo "$SFDX_AUTH_URL" > auth.txt
+          sf org login sfdx-url --sfdx-url-file auth.txt --alias target-org --verbose
