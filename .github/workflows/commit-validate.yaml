@@ -12,7 +12,7 @@ jobs:
       - name: Install Salesforce CLI
         run: |
           echo "Installing Salesforce CLI..."
-          npm install -g sfdx-cli
+          npm install -g @salesforce/cli
       - name: Environment Initialization
         run: |
           echo "Initializing environment..."
