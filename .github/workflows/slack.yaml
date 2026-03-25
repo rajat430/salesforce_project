@@ -30,13 +30,12 @@ jobs:
 
       - name: Send Slack Notification
         run: |
-
-         TOTAL=$(jq -r '.violationCounts.total' sfca-result.json) 
-         CRITICAL=$(jq -r '.violationCounts.critical' sfca-result.json) 
-         HIGH=$(jq -r '.violationCounts.high' sfca-result.json) 
-         MEDIUM=$(jq -r '.violationCounts.medium' sfca-result.json) 
-         LOW=$(jq -r '.violationCounts.low' sfca-result.json) 
-
+          TOTAL=$(jq -r '.violationCounts.total' sfca-result.json) 
+          CRITICAL=$(jq -r '.violationCounts.sev1' sfca-result.json) 
+          HIGH=$(jq -r '.violationCounts.sev2' sfca-result.json) 
+          MEDIUM=$(jq -r '.violationCounts.sev3' sfca-result.json) 
+          LOW=$(jq -r '.violationCounts.sev4' sfca-result.json) 
+          Information=$(jq -r '.violationCounts.sev5' sfca-result.json)
           artifact_url="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload-result.outputs.artifact-id }}"
           MESSAGE="🔍 SFCA Scan Completed
           📊 Violations: $TOTAL
@@ -44,6 +43,7 @@ jobs:
           🟥 High: $HIGH
           🟨 Medium: $MEDIUM
           🟩 Low: $LOW
+          🟦 Information: $Information
           📁 Artifact: sfca-report
           🔗 Download Complete Report and View here: $artifact_url"
 
