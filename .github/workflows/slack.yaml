@@ -1,0 +1,63 @@
+name: slack_notification
+on:
+
+  schedule:
+    - cron: '*/5 * * * *' # Runs every 5 minutes
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to run the workflow on'
+        required: true
+        default: 'develop'
+jobs:
+  slack_notification:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: ${{inputs.branch}}
+      - name: Install Salesforce CLI
+        run: |
+          echo "Installing Salesforce CLI..."
+          npm install -g @salesforce/cli
+      - name: SFCA installation
+        run: |
+          echo "Installing SFCA..."
+          echo "y" | sf plugins install @salesforce/plugin-code-analyzer
+
+      - name: Analyzer Run
+        run: |
+          echo "Running SFCA..."
+          sf code-analyzer run --target force-app --rule-selector all --severity-threshold 2 --view=detail --output-file sfca-result.json --output-file sfca-result.sarif     
+          
+      - name: upload-result
+        uses: actions/upload-artifact@v4
+        id: upload-result
+        with:
+          name: sfca-result
+          path: sfca-result.json
+
+      - name: Send Slack Notification
+        run: |
+          TOTAL=$(jq -r '.violationCounts.total' sfca-result.json) 
+          CRITICAL=$(jq -r '.violationCounts.sev1' sfca-result.json) 
+          HIGH=$(jq -r '.violationCounts.sev2' sfca-result.json) 
+          MEDIUM=$(jq -r '.violationCounts.sev3' sfca-result.json) 
+          LOW=$(jq -r '.violationCounts.sev4' sfca-result.json) 
+          Information=$(jq -r '.violationCounts.sev5' sfca-result.json)
+          artifact_url="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload-result.outputs.artifact-id }}"
+          MESSAGE="🔍 SFCA Scan Completed
+          📊 Violations: $TOTAL
+          🟠 Critical: $CRITICAL
+          🟥 High: $HIGH
+          🟨 Medium: $MEDIUM
+          🟩 Low: $LOW
+          🟦 Information: $Information
+          📁 Artifact: sfca-report
+          🔗 Download Complete Report and View here: $artifact_url"
+
+          curl -X POST -H "Content-type: application/json" \
+          --data "{\"text\":\"$MESSAGE\"}" \
+          ${{ secrets.SLACK_WEBHOOK_URL }}
+

@@ -1,9 +1,11 @@
-name: validate_commit
+name: deploy_workflow
 on: 
-  push:
-    branches: [feature/**,bugfix/**,hotfix/**]
+  pull_request:
+    branches: [develop,release/**,main]
+    types: [closed]
 jobs:
-  validate_commit:
+  Deploy:
+    if: github.event.pull_request.merged == true
     env: 
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     runs-on: ubuntu-latest
@@ -19,16 +21,20 @@ jobs:
         run: |
           echo "Initializing environment..."
           # Add any necessary environment setup commands here
-          if [[ ${{github.ref}} == refs/heads/feature/* ]]; then
-            echo "This is a feature branch."
+          if [[ ${{github.base_ref}} == "develop" ]]; then
+            echo "This is a develop branch."
             echo "SFDX_AUTH_URL=${{secrets.SFDX_AUTH_URL}}" >> $GITHUB_ENV
             echo "ORG_USERNAME=${{secrets.ORG_USERNAME}}" >> $GITHUB_ENV
-          elif [[ ${{github.ref}} == refs/heads/bugfix/* ]]; then
-            echo "This is a bugfix branch."
+          elif [[ ${{github.base_ref}} == "release/project1" ]]; then
+            echo "This is a release branch for project1."
             echo "SFDX_AUTH_URL=${{secrets.SFDX_AUTH_URL}}" >> $GITHUB_ENV
             echo "ORG_USERNAME=${{secrets.ORG_USERNAME}}" >> $GITHUB_ENV
-          elif [[ ${{github.ref}} == refs/heads/hotfix/* ]]; then
-            echo "This is a hotfix branch."
+          elif [[ ${{github.base_ref}} == "release/project2" ]]; then
+            echo "This is a release branch for project2."
+            echo "SFDX_AUTH_URL=${{secrets.SFDX_AUTH_URL}}" >> $GITHUB_ENV
+            echo "ORG_USERNAME=${{secrets.ORG_USERNAME}}" >> $GITHUB_ENV
+          elif [[ ${{github.base_ref}} == "main" ]]; then
+            echo "This is the main branch."
             echo "SFDX_AUTH_URL=${{secrets.SFDX_AUTH_URL}}" >> $GITHUB_ENV
             echo "ORG_USERNAME=${{secrets.ORG_USERNAME}}" >> $GITHUB_ENV
           else
@@ -43,4 +49,4 @@ jobs:
       - name: Validate Commit Message
         run: |
           echo "Validating commit message..."
-          sf project deploy start --dry-run -d force-app -c -l RunLocalTests -o $ORG_USERNAME --verbose
+          sf project deploy start -d force-app -c -l RunLocalTests -o $ORG_USERNAME --verbose
