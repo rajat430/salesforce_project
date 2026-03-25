@@ -30,14 +30,12 @@ jobs:
 
       - name: Send Slack Notification
         run: |
-
-          url=$(curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts)
-          artifact_url=$(echo $url | jq -r '.artifacts[0].archive_download_url')  
+          artifact_url="https://${github.server_url}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload-result.outputs.artifact-id }}"
           echo $artifact_url
           MESSAGE="🔍 SFCA Scan Completed
           📊 Violations: 30
           📁 Artifact: sfca-report
-          🔗 View here: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          🔗 View here: $artifact_url"
           echo $MESSAGE
           # CONTENT=$(cat sfca-result.json | sed ':a;N;$!ba;s/\n/\\n/g')
           # curl -X POST -H "Content-type: application/json" \
