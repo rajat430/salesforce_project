@@ -30,7 +30,7 @@ jobs:
 
       - name: Send Slack Notification
         run: |
-          artifact_url="https://${github.server_url}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload-result.outputs.artifact-id }}"
+          artifact_url="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload-result.outputs.artifact-id }}"
           echo $artifact_url
           MESSAGE="🔍 SFCA Scan Completed
           📊 Violations: 30
