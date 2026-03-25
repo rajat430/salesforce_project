@@ -32,15 +32,13 @@ jobs:
         run: |
 
           url=$(curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts)
-          echo $url
+          artifact_url=$(echo $url | jq -r '.artifacts[0].archive_download_url')  
+          echo $artifact_url
           MESSAGE="🔍 SFCA Scan Completed
           📊 Violations: 30
           📁 Artifact: sfca-report
           🔗 View here: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           echo $MESSAGE
-
-
-          
           # CONTENT=$(cat sfca-result.json | sed ':a;N;$!ba;s/\n/\\n/g')
           # curl -X POST -H "Content-type: application/json" \
           # --data "{\"text\":\"$CONTENT\"}" \
