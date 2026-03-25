@@ -16,3 +16,4 @@ jobs:
           subject: "New Push Event in Repository"
           body: "A new push event has occurred in the repository. Please check the details."
           to: rajatbhawsarmyntra1@gmail.com
+          from: ${{ secrets.EMAIL_USERNAME }}
