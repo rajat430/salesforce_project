@@ -27,4 +27,4 @@ jobs:
           curl -X \
           POST -H 'Content-type: application/json' --data \
           '{"text":"A new push event has occurred in the repository. Please check the details.
-          cat sfca-result.json"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+          $(cat sfca-result.json)"}' ${{ secrets.SLACK_WEBHOOK_URL }}
