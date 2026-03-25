@@ -1,13 +1,22 @@
 name: slack_notification
 on:
+
   schedule:
     - cron: '*/5 * * * *' # Runs every 5 minutes
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to run the workflow on'
+        required: true
+        default: 'develop'
 jobs:
   slack_notification:
     runs-on: ubuntu-latest
     steps:
       - name: checkout code
         uses: actions/checkout@v2
+        with:
+          ref: ${{inputs.branch}}
       - name: Install Salesforce CLI
         run: |
           echo "Installing Salesforce CLI..."
