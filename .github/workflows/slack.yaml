@@ -19,18 +19,29 @@ jobs:
       - name: Analyzer Run
         run: |
           echo "Running SFCA..."
-          sf code-analyzer run --target force-app --rule-selector all --severity-threshold 2 --view=detail --output-file sfca-result.json --output-file sfca-result.sarif            
-
+          sf code-analyzer run --target force-app --rule-selector all --severity-threshold 2 --view=detail --output-file sfca-result.json --output-file sfca-result.sarif     
+          
+      - name: upload-result
+        uses: actions/upload-artifact@v2
+        id: upload-result
+        with:
+          name: sfca-result
+          path: sfca-result.json
 
       - name: Send Slack Notification
         run: |
-          CONTENT=$(cat sfca-result.json | sed ':a;N;$!ba;s/\n/\\n/g')
 
-          curl -X POST -H "Content-type: application/json" \
-          --data "{\"text\":\"$CONTENT\"}" \
-          ${{ secrets.SLACK_WEBHOOK_URL }}
+          url=$(curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts)
+          echo $url
+          MESSAGE="🔍 SFCA Scan Completed
+          📊 Violations: 30
+          📁 Artifact: sfca-report
+          🔗 View here: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo $MESSAGE
 
+
+          
           # CONTENT=$(cat sfca-result.json | sed ':a;N;$!ba;s/\n/\\n/g')
           # curl -X POST -H "Content-type: application/json" \
-          # --data "{\"text\":\"A new push event has occurred in the repository.\n$CONTENT\"}" \
+          # --data "{\"text\":\"$CONTENT\"}" \
           # ${{ secrets.SLACK_WEBHOOK_URL }}
