@@ -24,12 +24,11 @@ jobs:
 
       - name: Send Slack Notification
         run: |
-          CONTENT=$(cat sfca-result.json)
-          echo $CONTENT
-          curl -X \
-          POST -H 'Content-type: application/json' --data \
-          "{\"text\":\"A new push event has occurred in the repository. Please check the details.
-          $CONTENT\"}" ${{ secrets.SLACK_WEBHOOK_URL }}
+          CONTENT=$(cat sfca-result.json | sed ':a;N;$!ba;s/\n/\\n/g')
+
+          curl -X POST -H "Content-type: application/json" \
+          --data "{\"text\":\"$CONTENT\"}" \
+          ${{ secrets.SLACK_WEBHOOK_URL }}
 
           # CONTENT=$(cat sfca-result.json | sed ':a;N;$!ba;s/\n/\\n/g')
           # curl -X POST -H "Content-type: application/json" \
