@@ -24,7 +24,7 @@ jobs:
 
       - name: Send Slack Notification
         run: |
-          CONTENT=$(cat sfca-result.json | sed ':a;N;$!ba;s/\n/\\n/g')
+          CONTENT=$(cat sfca-result.json)
           echo $CONTENT
           curl -X \
           POST -H 'Content-type: application/json' --data \
