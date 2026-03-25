@@ -22,7 +22,7 @@ jobs:
           sf code-analyzer run --target force-app --rule-selector all --severity-threshold 2 --view=detail --output-file sfca-result.json --output-file sfca-result.sarif     
           
       - name: upload-result
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         id: upload-result
         with:
           name: sfca-result
