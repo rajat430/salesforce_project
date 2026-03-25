@@ -5,6 +5,26 @@ jobs:
   slack_notification:
     runs-on: ubuntu-latest
     steps:
+      - name: checkout code
+        uses: actions/checkout@v2
+      - name: Install Salesforce CLI
+        run: |
+          echo "Installing Salesforce CLI..."
+          npm install -g @salesforce/cli
+      - name: SFCA installation
+        run: |
+          echo "Installing SFCA..."
+          echo "y" | sf plugins install @salesforce/plugin-code-analyzer
+
+      - name: Analyzer Run
+        run: |
+          echo "Running SFCA..."
+          sf code-analyzer run --target force-app --rule-selector all --severity-threshold 2 --view=detail --output-file sfca-result.json --output-file sfca-result.sarif            
+
+
       - name: Send Slack Notification
         run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"A new push event has occurred in the repository. Please check the details."}' ${{ secrets.SLACK_WEBHOOK_URL }}
+          curl -X \
+          POST -H 'Content-type: application/json' --data \
+          '{"text":"A new push event has occurred in the repository. Please check the details.
+          cat sfca-result.json"}' ${{ secrets.SLACK_WEBHOOK_URL }}
