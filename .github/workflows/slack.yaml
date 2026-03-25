@@ -31,13 +31,12 @@ jobs:
       - name: Send Slack Notification
         run: |
           artifact_url="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload-result.outputs.artifact-id }}"
-          echo $artifact_url
           MESSAGE="🔍 SFCA Scan Completed
           📊 Violations: 30
           📁 Artifact: sfca-report
           🔗 View here: $artifact_url"
-          echo $MESSAGE
-          # CONTENT=$(cat sfca-result.json | sed ':a;N;$!ba;s/\n/\\n/g')
-          # curl -X POST -H "Content-type: application/json" \
-          # --data "{\"text\":\"$CONTENT\"}" \
-          # ${{ secrets.SLACK_WEBHOOK_URL }}
+
+          curl -X POST -H "Content-type: application/json" \
+          --data "{\"text\":\"$MESSAGE\"}" \
+          ${{ secrets.SLACK_WEBHOOK_URL }}
+
