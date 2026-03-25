@@ -11,6 +11,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: validation
+        if: github.base_ref == 'main'
+        run: echo "This is a pull request to the main branch. Running validation for main branch."
 
       - name: Install Salesforce CLI
         run: |
